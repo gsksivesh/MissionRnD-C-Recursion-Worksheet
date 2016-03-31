@@ -35,8 +35,40 @@ more parameters .
 
 #include<stdlib.h>
 
-
+void is_path_exists(int *maze, int rows, int columns, int x1, int y1, int x2, int y2, int *flag, int *ans)
+{
+	if (maze[x1*columns + y1] == 0)
+		*ans = 0;
+	if (x1 == x2&&y1 == y2)
+		*ans = 1;
+	if (flag[x1*columns + y1])
+		return;
+	if (x1 - 1 >= 0 && maze[(x1 - 1)*columns + y1])//up
+	{
+		flag[x1*columns + y1] = 1;
+		is_path_exists(maze, rows, columns, x1 - 1, y1, x2, y2, flag, ans);
+	}
+	if (x1 + 1 < rows && maze[(x1 + 1)*columns + y1])//down
+	{
+		flag[x1*columns + y1] = 1;
+		is_path_exists(maze, rows, columns, x1 + 1, y1, x2, y2, flag, ans);
+	}
+	if (y1 - 1 >= 0 && maze[x1*columns + (y1 - 1)])//left
+	{
+		flag[x1*columns + y1] = 1;
+		is_path_exists(maze, rows, columns, x1, y1 - 1, x2, y2, flag, ans);
+	}
+	if (y1 + 1 < columns && maze[x1*columns + (y1 + 1)])//right
+	{
+		flag[x1*columns + y1] = 1;
+		is_path_exists(maze, rows, columns, x1, y1 + 1, x2, y2, flag, ans);
+	}
+}
 int path_exists(int *maze, int rows, int columns, int x1, int y1, int x2, int y2)
 {
-	return 1;
+	int flag[100] = { 0 }, i, ans = 0;
+	if (rows < 0 || columns < 0 || x1 < 0 || y1 < 0 || x2 < 0 || y2 < 0)
+		return 0;
+	is_path_exists(maze, rows, columns, x1, y1, x2, y2, flag, &ans);
+	return ans;
 }
