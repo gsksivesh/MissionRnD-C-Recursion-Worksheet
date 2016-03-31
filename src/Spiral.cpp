@@ -33,44 +33,71 @@ Note : Check the function Parameters ,Its a double pointer .
 
 #include "stdafx.h"
 #include<stdlib.h>
-int copy_array(int **input_array, int *ans, int row_start, int coloumn_start, int row_increment, int coloumn_increment, int ans_index, int rows, int coloumns, int step_size)
+void go_spiral(int **input_array, int *ans, int right, int down, int left, int up, int ans_index, int rows, int coloumns, int row_index, int coloumn_index, int start)
 {
-	int i, j;
-	int temp;
-	temp = ans_index;
-	for (i = rows - row_start, j = coloumns - coloumn_start; ((ans_index - temp) < step_size) ; j += coloumn_increment, i += row_increment, ans_index++)
-	{
-		ans[ans_index] = input_array[i][j];
-	}
-	return ans_index;
-}
-int * go_spiral(int **input_array, int *ans, int row_step_size, int coloumn_step_size, int right, int down, int left, int up, int ans_index, int rows, int coloumns)
-{
-	int i, j;
-	if (row_step_size == -1 || coloumn_step_size == -1)
-		return ans;
+	if (rows < 0 || coloumns < 0)
+		return;
 	if (right)
 	{
-		ans_index = copy_array(input_array, ans, rows - row_step_size, coloumns - coloumn_step_size, 0, 1, ans_index, rows, coloumns, coloumn_step_size);
-		return go_spiral(input_array, ans, row_step_size - 1, coloumn_step_size, 0, 1, 0, 0, ans_index, rows, coloumns);
+		if (coloumn_index == coloumns)
+		{
+			go_spiral((int**)input_array, ans, 0, 1, 0, 0, ans_index, rows, coloumns, row_index + 1, coloumn_index - 1, start);
+		}
+		else
+		{
+			ans[ans_index] = input_array[row_index][coloumn_index];
+			go_spiral((int**)input_array, ans, 1, 0, 0, 0, ans_index + 1, rows, coloumns, row_index, coloumn_index + 1, start);
+		}
 	}
 	else if (down)
 	{
-		ans_index = copy_array(input_array, ans, rows - row_step_size, coloumn_step_size - 1, 1, 0, ans_index, rows, coloumns, row_step_size);
-		return go_spiral(input_array, ans, row_step_size, coloumn_step_size - 1, 0, 0, 1, 0, ans_index, rows, coloumns);
+		if (row_index == rows)
+		{
+			go_spiral((int**)input_array, ans, 0, 0, 1, 0, ans_index, rows, coloumns, row_index - 1, coloumn_index - 1, start);
+		}
+		else
+		{
+			ans[ans_index] = input_array[row_index][coloumn_index];
+			go_spiral((int**)input_array, ans, 0, 1, 0, 0, ans_index + 1, rows, coloumns, row_index + 1, coloumn_index, start);
+		}
 	}
 	else if (left)
 	{
-		ans_index = copy_array(input_array, ans, row_step_size, coloumn_step_size, 0, -1, ans_index, rows, coloumns, coloumn_step_size);
-		return go_spiral(input_array, ans, row_step_size - 1, coloumn_step_size, 0, 0, 0, 1, ans_index, rows, coloumns);
+		if (coloumn_index == start - 1)
+		{
+			go_spiral((int**)input_array, ans, 0, 0, 0, 1, ans_index, rows, coloumns, row_index - 1, coloumn_index + 1, start);
+		}
+		else
+		{
+			ans[ans_index] = input_array[row_index][coloumn_index];
+			go_spiral((int**)input_array, ans, 0, 0, 1, 0, ans_index + 1, rows, coloumns, row_index, coloumn_index - 1, start);
+		}
 	}
 	else if (up)
 	{
-		ans_index = copy_array(input_array, ans, row_step_size, coloumns - coloumn_step_size - 1, -1, 0, ans_index, rows, coloumns, row_step_size);
-		return go_spiral(input_array, ans, row_step_size , coloumn_step_size - 1, 1, 0, 0, 0, ans_index, rows, coloumns);
+		if (coloumn_index + 1 == coloumns)
+			return;
+		if (row_index == start)
+		{
+			go_spiral((int**)input_array, ans, 1, 0, 0, 0, ans_index, rows - 1, coloumns - 1, row_index + 1, coloumn_index + 1, start + 1);
+		}
+		else
+		{
+			ans[ans_index] = input_array[row_index][coloumn_index];
+			go_spiral((int**)input_array, ans, 0, 0, 0, 1, ans_index + 1, rows, coloumns, row_index - 1, coloumn_index, start);
+		}
 	}
 }
 int *spiral(int rows, int columns, int **input_array)
 {
-	return NULL;
+	int *ans;
+	if (rows < 0 || columns < 0)
+		return NULL;
+	if (input_array == NULL)
+		return NULL;
+	if (rows == 0 || columns == 0)
+		return NULL;
+	ans = (int*)malloc(sizeof(int)*(rows*columns));
+	go_spiral((int**)input_array, ans, 1, 0, 0, 0, 0, rows, columns, 0, 0, 0);
+	return ans;
 }
