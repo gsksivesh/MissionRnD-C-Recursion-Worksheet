@@ -33,44 +33,46 @@ Note : Check the function Parameters ,Its a double pointer .
 
 #include "stdafx.h"
 #include<stdlib.h>
-void go_spiral(int **input_array, int *ans, int right, int down, int left, int up, int ans_index, int rows, int coloumns, int row_index, int coloumn_index, int start)
+void go_spiral(int **input_array, int *ans, int right, int down, int left, int up, int ans_index, int rows, int coloumns, int row_index, int coloumn_index, int start, int limit)
 {
+	if (ans_index == limit)
+		return;
 	if (rows < 0 || coloumns < 0)
 		return;
 	if (right)
 	{
 		if (coloumn_index == coloumns)
 		{
-			go_spiral((int**)input_array, ans, 0, 1, 0, 0, ans_index, rows, coloumns, row_index + 1, coloumn_index - 1, start);
+			go_spiral((int**)input_array, ans, 0, 1, 0, 0, ans_index, rows, coloumns, row_index + 1, coloumn_index - 1, start, limit);
 		}
 		else
 		{
 			ans[ans_index] = input_array[row_index][coloumn_index];
-			go_spiral((int**)input_array, ans, 1, 0, 0, 0, ans_index + 1, rows, coloumns, row_index, coloumn_index + 1, start);
+			go_spiral((int**)input_array, ans, 1, 0, 0, 0, ans_index + 1, rows, coloumns, row_index, coloumn_index + 1, start, limit);
 		}
 	}
 	else if (down)
 	{
 		if (row_index == rows)
 		{
-			go_spiral((int**)input_array, ans, 0, 0, 1, 0, ans_index, rows, coloumns, row_index - 1, coloumn_index - 1, start);
+			go_spiral((int**)input_array, ans, 0, 0, 1, 0, ans_index, rows, coloumns, row_index - 1, coloumn_index - 1, start, limit);
 		}
 		else
 		{
 			ans[ans_index] = input_array[row_index][coloumn_index];
-			go_spiral((int**)input_array, ans, 0, 1, 0, 0, ans_index + 1, rows, coloumns, row_index + 1, coloumn_index, start);
+			go_spiral((int**)input_array, ans, 0, 1, 0, 0, ans_index + 1, rows, coloumns, row_index + 1, coloumn_index, start, limit);
 		}
 	}
 	else if (left)
 	{
 		if (coloumn_index == start - 1)
 		{
-			go_spiral((int**)input_array, ans, 0, 0, 0, 1, ans_index, rows, coloumns, row_index - 1, coloumn_index + 1, start);
+			go_spiral((int**)input_array, ans, 0, 0, 0, 1, ans_index, rows, coloumns, row_index - 1, coloumn_index + 1, start, limit);
 		}
 		else
 		{
 			ans[ans_index] = input_array[row_index][coloumn_index];
-			go_spiral((int**)input_array, ans, 0, 0, 1, 0, ans_index + 1, rows, coloumns, row_index, coloumn_index - 1, start);
+			go_spiral((int**)input_array, ans, 0, 0, 1, 0, ans_index + 1, rows, coloumns, row_index, coloumn_index - 1, start, limit);
 		}
 	}
 	else if (up)
@@ -79,12 +81,12 @@ void go_spiral(int **input_array, int *ans, int right, int down, int left, int u
 			return;
 		if (row_index == start)
 		{
-			go_spiral((int**)input_array, ans, 1, 0, 0, 0, ans_index, rows - 1, coloumns - 1, row_index + 1, coloumn_index + 1, start + 1);
+			go_spiral((int**)input_array, ans, 1, 0, 0, 0, ans_index, rows - 1, coloumns - 1, row_index + 1, coloumn_index + 1, start + 1, limit);
 		}
 		else
 		{
 			ans[ans_index] = input_array[row_index][coloumn_index];
-			go_spiral((int**)input_array, ans, 0, 0, 0, 1, ans_index + 1, rows, coloumns, row_index - 1, coloumn_index, start);
+			go_spiral((int**)input_array, ans, 0, 0, 0, 1, ans_index + 1, rows, coloumns, row_index - 1, coloumn_index, start, limit);
 		}
 	}
 }
@@ -98,6 +100,6 @@ int *spiral(int rows, int columns, int **input_array)
 	if (rows == 0 || columns == 0)
 		return NULL;
 	ans = (int*)malloc(sizeof(int)*(rows*columns));
-	go_spiral((int**)input_array, ans, 1, 0, 0, 0, 0, rows, columns, 0, 0, 0);
+	go_spiral((int**)input_array, ans, 1, 0, 0, 0, 0, rows, columns, 0, 0, 0, rows*columns);
 	return ans;
 }

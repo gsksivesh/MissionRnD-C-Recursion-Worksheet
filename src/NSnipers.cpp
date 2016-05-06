@@ -43,6 +43,72 @@ P.S: The Above Problem is just a modified version of a popular BackTracking prob
 */
 
 #include "stdafx.h"
-int solve_nsnipers(int *battlefield, int n){
-	return 0;
+
+int check(int *battlefield, int n, int element_index)
+{
+	int left = 1, right = 1;
+	int i = element_index - n;
+
+	for (; i >= 0 && (i - left + 1) % n != 0 && (i + right) % n != 0; i -= n, left++, right++)
+	{
+		if (battlefield[i] == 1 || battlefield[i - left] == 1 || battlefield[i + right] == 1)
+			return 0;
+	}
+	for (; i >= 0 && (i - left + 1) % n != 0; i -= n, left++)
+	{
+		if (battlefield[i] == 1 || battlefield[i - left] == 1)
+			return 0;
+	}
+	for (; i >= 0 && (i + right) % n != 0; i -= n, right++)
+	{
+		if (battlefield[i] == 1 || battlefield[i + right] == 1)
+			return 0;
+	}
+	for (; i >= 0; i -= n)
+	{
+		if (battlefield[i] == 1)
+			return 0;
+	}
+	return 1;
+}
+
+void place_sniper(int *battlefield, int n, int row, int coloumn, int *flag)
+{
+	int index;
+	if (row >= n)
+	{
+		*flag = 2;
+		return;
+	}
+
+	index = row*n + coloumn;
+	if (coloumn >= n)
+	{
+		*flag = 1;
+		return;
+	}
+	if (check(battlefield, n, index))
+	{
+		battlefield[index] = 1;
+		place_sniper(battlefield, n, row + 1, 0, flag);
+		if (*flag == 1)
+		{
+			battlefield[index] = 0;
+			*flag = 0;
+		}
+	}
+	if (*flag == 2)
+	{
+		return;
+	}
+	place_sniper(battlefield, n, row, coloumn + 1, flag);
+}
+
+int solve_nsnipers(int *battlefield, int n)
+{
+	int flag = 0;
+	if (n <= 0 || battlefield == NULL || n == 2 || n == 3)
+		return 0;
+	place_sniper(battlefield, n, 0, 0, &flag);
+	return 1;
 }
